@@ -1,16 +1,39 @@
+import { useState } from 'react';
 import styles from './NewPost.module.css';
 import PropTypes from 'prop-types';
 
-const NewPost = ({ onTextChange, onAuthorChange, onCancel }) => {
+const NewPost = ({ onCancel }) => {
+  const [text, setText] = useState('');
+  const [author, setAuthor] = useState('');
+
+  const textChangeHandler = (event) => {
+    setText(event.target.value);
+  };
+
+  const authorChangeHandler = (event) => {
+    setAuthor(event.target.value);
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    const postData = {
+      text,
+      author,
+    };
+
+    console.log(postData);
+    onCancel();
+  };
+
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={submitHandler}>
       <p>
         <label htmlFor='body'>Text</label>
-        <textarea id='body' required rows={3} onChange={onTextChange} />
+        <textarea id='body' required rows={3} onChange={textChangeHandler} />
       </p>
       <p>
         <label htmlFor='name'>Your name</label>
-        <input type='text' id='name' required onChange={onAuthorChange} />
+        <input type='text' id='name' required onChange={authorChangeHandler} />
       </p>
       <p className={styles.actions}>
         <button type='button' onClick={onCancel}>
@@ -23,8 +46,6 @@ const NewPost = ({ onTextChange, onAuthorChange, onCancel }) => {
 };
 
 NewPost.propTypes = {
-  onTextChange: PropTypes.func.isRequired,
-  onAuthorChange: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
 };
 
