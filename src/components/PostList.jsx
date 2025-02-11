@@ -1,43 +1,44 @@
-import { useState } from "react";
-import NewPost from "./NewPost";
-import Post from "./Post";
-import styles from "./PostList.module.css";
-import Modal from "./Modal";
-import PropTypes from "prop-types";
+import NewPost from './NewPost';
+import Post from './Post';
+import styles from './PostList.module.css';
+import Modal from './Modal';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 const PostList = ({ isPosting, onStopPosting }) => {
-	const [text, setText] = useState("");
-	const [author, setAuthor] = useState("");
+  const [posts, setPosts] = useState([]);
 
-	const textChangeHandler = (event) => {
-		setText(event.target.value);
-	};
+  const addPostHandler = (postData) => {
+    setPosts((existingPosts) => [postData, ...existingPosts]);
+  };
 
-	const authorChangeHandler = (event) => {
-		setAuthor(event.target.value);
-	};
-
-	return (
-		<>
-			{isPosting && (
-				<Modal onClose={onStopPosting}>
-					<NewPost
-						onTextChange={textChangeHandler}
-						onAuthorChange={authorChangeHandler}
-					/>
-				</Modal>
-			)}
-			<ul className={styles.posts}>
-				<Post author={author} text={text} />
-				<Post author="Max Smith" text="NextJS is awesome!" />
-			</ul>
-		</>
-	);
+  return (
+    <>
+      {isPosting && (
+        <Modal onClose={onStopPosting}>
+          <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
+        </Modal>
+      )}
+      {posts.length > 0 && (
+        <ul className={styles.posts}>
+          {posts.map(({ author, text }) => (
+            <Post author={author} text={text} key={text} />
+          ))}
+        </ul>
+      )}
+      {posts.length === 0 && (
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <h2>There are no posts yet.</h2>
+          <p>Start adding some!</p>
+        </div>
+      )}
+    </>
+  );
 };
 
 PostList.propTypes = {
-	isPosting: PropTypes.bool,
-	onStopPosting: PropTypes.func,
+  isPosting: PropTypes.bool,
+  onStopPosting: PropTypes.func,
 };
 
 export default PostList;
